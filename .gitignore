@@ -1,0 +1,10 @@
+# Public repo: only the app and its installer. Notes, boards and anything else stay out.
+/*
+!/.gitignore
+!/README.md
+!/LICENSE
+!/checklist.py
+!/install.sh
+!/icon.svg
+__pycache__/
+*.tmp
