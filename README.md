@@ -47,7 +47,7 @@ The installer downloads `checklist.py`, refuses to install it if it isn't valid 
 ### Requirements
 
 - Python 3.10 or newer
-- [Textual](https://textual.textualize.io/) (tested with 8.2): `sudo pacman -S python-textual` on Arch, or `python3 -m pip install --user textual`
+- [Textual](https://textual.textualize.io/) (tested with 8.2): `sudo pacman -S python-textual` on Arch, or `python3 -m pip install --user textual`. Alternatively, install [uv](https://docs.astral.sh/uv/) and skip this: when `python3` has no Textual (for example after a Python upgrade), checklist runs itself through `uv`, which fetches Textual.
 - A [Nerd Font](https://www.nerdfonts.com/) in your terminal, for the icons
 
 > [!NOTE]

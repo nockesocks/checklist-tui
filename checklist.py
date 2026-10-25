@@ -1,4 +1,8 @@
 #!/usr/bin/env python3
+# /// script
+# requires-python = ">=3.10"
+# dependencies = ["textual>=8.2"]
+# ///
 """checklist: a tiny click-to-tick scratchpad with several lists.
 
 Everything lives in one plain Markdown file (default ~/.local/share/checklist/checklist.md):
@@ -28,18 +32,41 @@ Mouse: tick box ticks; click an entry for its card (click the card's text to
        edit it, its ! for priority); right-click an entry to edit in place;
        click empty space to get back to the add box.
 """
-import argparse, json, math, os
+import argparse, json, math, os, sys
 from functools import lru_cache
 from pathlib import Path
 
-from rich.cells import cell_len
-from rich.text import Text
-from textual.app import App, ComposeResult
-from textual.binding import Binding
-from textual.containers import Horizontal, Vertical, VerticalScroll
-from textual.message import Message
-from textual.screen import ModalScreen
-from textual.widgets import Input, Static, TextArea
+try:
+    from rich.cells import cell_len
+    from rich.text import Text
+    from textual.app import App, ComposeResult
+    from textual.binding import Binding
+    from textual.containers import Horizontal, Vertical, VerticalScroll
+    from textual.message import Message
+    from textual.screen import ModalScreen
+    from textual.widgets import Input, Static, TextArea
+except ImportError as e:
+    # Packages are installed per Python version, so upgrading Python leaves them behind.
+    # uv can supply Textual from the script block at the top; the env var stops a loop.
+    if not os.environ.get("CHECKLIST_VIA_UV"):
+        try:
+            os.execvpe("uv", ["uv", "run", "--quiet", "--script", __file__, *sys.argv[1:]],
+                       {**os.environ, "CHECKLIST_VIA_UV": "1"})
+        except OSError:
+            pass  # no uv: explain below
+    v = sys.version_info
+    sys.exit(
+        f"checklist: can't load the Textual library ({e}).\n"
+        f"  This Python is {v.major}.{v.minor} ({sys.executable}).\n"
+        f"  If Python was upgraded recently, Textual is still installed for the old version only.\n"
+        f"  Install it for this one:\n"
+        f"    {sys.executable} -m pip install --user textual\n"
+        f"  If pip says the environment is externally managed (Homebrew, some Linux distros), either:\n"
+        f"    {sys.executable} -m pip install --user --break-system-packages textual\n"
+        f"    or your package manager's python-textual (Arch: sudo pacman -S python-textual)\n"
+        f"  Or install uv (https://docs.astral.sh/uv/): checklist then fetches Textual itself,\n"
+        f"  whatever Python you upgrade to."
+    )
 
 # ── settings ────────────────────────────────────────────────
 CONFIG = Path(os.environ.get("XDG_CONFIG_HOME") or Path.home() / ".config") / "checklist"

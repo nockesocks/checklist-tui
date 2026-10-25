@@ -50,8 +50,12 @@ ln -sfn "$APP_DIR/checklist.py" "$CMD"
 say "installed $APP_DIR/checklist.py"
 say "command:  $CMD"
 
-if ! python3 -c 'import textual' >/dev/null 2>&1; then
-    say "one more step: it needs the Textual library"
+if python3 -c 'import textual' >/dev/null 2>&1; then
+    :
+elif command -v uv >/dev/null 2>&1; then
+    say "Textual will be fetched through uv on first run"
+else
+    say "one more step: it needs the Textual library (or install uv and it fetches Textual itself)"
     if command -v pacman >/dev/null 2>&1; then
         say "  sudo pacman -S python-textual"
     else
